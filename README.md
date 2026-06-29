@@ -8,6 +8,7 @@ This project explores how a full data pipeline is built end-to-end, from raw ing
 
 The pipeline follows a production-inspired batch flow:
 
+<img width="1774" height="792" alt="Architecture" src="https://github.com/user-attachments/assets/221a0242-ec9f-430f-aa9b-636de717ac7f" />
 
 
 ## Tech Stack
@@ -19,7 +20,7 @@ The pipeline follows a production-inspired batch flow:
 * Apache Spark (Data Processing)
 * Tailscale (Local server exposure)
 * Python (Preprocessing, Transformation)
-* SQL (Tranformation, Analytics Queries)
+* SQL (Trasnformation, Analytics Queries)
 
 ## Data Source
 
@@ -39,7 +40,7 @@ A local processing layer was built to extract and restructure the data, and a lo
 
 ## Data Storage
 
-Amazon S3 was used as the central storage layer for the pipeline. An S3 bucket was created and configured with the necessary permissions, including IAM roles and policies that allowed Airbyte to write data securely. 
+Amazon S3 was used as the staging storage layer for the pipeline. An S3 bucket was created and configured with the necessary permissions, including IAM roles and policies that allowed Airbyte to write data securely. 
 
 Once credentials were configured, Airbyte was able to reliably push ingested batch data into S3, completing the ingestion and storage layer of the pipeline.
 
@@ -51,12 +52,11 @@ Databricks and Apache Spark were used to process and transform the data at scale
 
 A Medallion Architecture was implemented to structure the transformations across three layers:
 
-* **The Bronze layer** stored ingested data from Airbyte. During ingestion, JSONL was converted to CSV, and the data was then stored without further transformations.
+* **The Bronze layer** stored ingested data from Airbyte in tabular format. During ingestion, JSONL was converted to CSV, and the data was then stored without further transformations.
 
 * **The Silver layer** processed and parsed the JSON event fields, cleaned the data, and extracted only the relevant attributes needed for analysis.
 
-* **The Gold layer** consisted of multiple aggregated tables designed for analytics, including event summaries, contributor activity metrics, repository activity metrics, time-based distributions, and breakdowns of bot versus organization activity.
-
+* **The Gold layer** consisted of multiple aggregated tables designed for analytics, including event summaries, contributor activity metrics, repository activity metrics, time-based distributions, and breakdowns of bot and organization activity.
 
 All transformations were designed to support incremental updates to ensure scalability and efficiency.
 
@@ -84,8 +84,10 @@ Tableau was considered, but instead Databricks native dashboards were used for s
 
 ## Future Improvements
 
-**Local preprocessing**: Replace manual preprocessing with a more automated and scalable approach
+*   **Orchestration:** Migrate the current automation to **Prefect** to better manage task dependencies, scheduling, and error alerting.
+*   **Data Quality:** Integrate **Great Expectations** to automatically catch missing data, validate schemas, and block bad data from reaching the dashboards.
+*   **Cloud Migration:** Move the local Python preprocessing script into Docker and AWS to eliminate the local infrastructure bottleneck.
 
-**Data orchestration**: Introduce workflow orchestration tools to schedule and manage pipeline jobs
+## Summary
 
-**Data validation**: Add validation layers to ensure data quality, consistency, and schema enforcement
+This project was a fun and highly practical learning experience that pushed me to work through real integration challenges across multiple tools. Building the pipeline end-to-end helped me understand how each system interacts and where real-world friction points appear. I now have a much stronger and clearer understanding of how data actually moves through modern data engineering pipelines.
