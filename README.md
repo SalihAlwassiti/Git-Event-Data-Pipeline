@@ -18,6 +18,8 @@ The pipeline follows a production-inspired batch flow:
 * Databricks (Processing & Dashboards)
 * Apache Spark (Data Processing)
 * Tailscale (Local server exposure)
+* Python (Preprocessing, Transformation)
+* SQL (Tranformation, Analytics Queries)
 
 ## Data Source
 
@@ -41,6 +43,8 @@ Amazon S3 was used as the central storage layer for the pipeline. An S3 bucket w
 
 Once credentials were configured, Airbyte was able to reliably push ingested batch data into S3, completing the ingestion and storage layer of the pipeline.
 
+Here is the AWS Policy attached to the Airbyte user: [AWS Airbyte Policy](https://github.com/SalihAlwassiti/Git-Event-Data-Pipeline/blob/main/aws_airbyte_policy.json)
+
 ## Data Processing
 
 Databricks and Apache Spark were used to process and transform the data at scale.
@@ -49,11 +53,14 @@ A Medallion Architecture was implemented to structure the transformations across
 
 * **The Bronze layer** stored ingested data from Airbyte. During ingestion, JSONL was converted to CSV, and the data was then stored without further transformations.
 
-* **The Silver layer** processed and parsed the JSON event fields, cleaned the data, and extracted only the relevant attributes needed for analysis. 
+* **The Silver layer** processed and parsed the JSON event fields, cleaned the data, and extracted only the relevant attributes needed for analysis.
 
-* **The Gold layer** consisted of multiple aggregated tables designed for analytics, including event summaries, contributor activity metrics, repository activity metrics, time-based distributions, and breakdowns of bot versus organization activity. 
+* **The Gold layer** consisted of multiple aggregated tables designed for analytics, including event summaries, contributor activity metrics, repository activity metrics, time-based distributions, and breakdowns of bot versus organization activity.
+
 
 All transformations were designed to support incremental updates to ensure scalability and efficiency.
+
+The bronze to silver to gold transformation codes: [Bronze To Silver](https://github.com/SalihAlwassiti/Git-Event-Data-Pipeline/blob/main/bronze_to_silver.py), [Silver To Gold](https://github.com/SalihAlwassiti/Git-Event-Data-Pipeline/blob/main/silver_to_gold.sql)
 
 Note: While I designed the core pipeline logic and data transformations, I utilized the Databricks AI Assistant to refine the Spark execution plans and implement incremental updates.
 
@@ -72,6 +79,8 @@ Tableau was considered, but instead Databricks native dashboards were used for s
 * Top 10 most active repositories
 * Percentage of bot vs organization activity
 * Event contribution breakdown by bots and organizations
+
+<img width="6000" height="8946" alt="GitHub Event Statistics-20260629_11-15_page-0001" src="https://github.com/user-attachments/assets/544ad647-b4d7-40d9-a78c-82c8204a9142" />
 
 ## Future Improvements
 
