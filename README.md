@@ -55,6 +55,8 @@ A Medallion Architecture was implemented to structure the transformations across
 
 All transformations were designed to support incremental updates to ensure scalability and efficiency.
 
+Note: While I designed the core pipeline logic and data transformations, I utilized the Databricks AI Assistant to refine the Spark execution plans and implement incremental updates.
+
 ## Visualization
 
 Tableau was considered, but instead Databricks native dashboards were used for simplicity and integration.
